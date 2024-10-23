@@ -47,7 +47,7 @@ class _MyHomePageState extends State<MyHomePage>
     _controller.addListener(() {
       setState(() {
         for (var fish in fishes) {
-          fish.updatePosition();
+          fish.updatePosition(speed); 
         }
       });
     });
@@ -163,9 +163,9 @@ class Fish {
 
   Fish({required this.color, required this.controller});
 
-  void updatePosition() {
-    top += 2 * verticalDirection;
-    left += 2 * horizontalDirection;
+  void updatePosition(double speed) {
+    top += verticalDirection * speed;
+    left += horizontalDirection * speed;
 
     if (top <= 0 || top >= 300) {
       verticalDirection *= -1;
