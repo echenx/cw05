@@ -40,9 +40,9 @@ class _MyHomePageState extends State<MyHomePage>
   @override
   void initState() {
     super.initState();
-    _controller = AnimationController(
-        duration: const Duration(seconds: 2), vsync: this)
-      ..repeat();
+    _controller =
+        AnimationController(duration: const Duration(seconds: 2), vsync: this)
+          ..repeat();
 
     _controller.addListener(() {
       setState(() {
@@ -60,9 +60,19 @@ class _MyHomePageState extends State<MyHomePage>
   }
 
   void _addFish() {
-    setState(() {
-      fishes.add(Fish(color: selectedColor, controller: _controller));
-    });
+    if (fishes.length < 10) {
+      setState(() {
+        fishes.add(Fish(color: selectedColor, controller: _controller));
+      });
+    }
+  }
+
+  void _removeFish() {
+    if (fishes.isNotEmpty) {
+      setState(() {
+        fishes.removeLast();
+      });
+    }
   }
 
   @override
@@ -127,6 +137,11 @@ class _MyHomePageState extends State<MyHomePage>
               ),
               SizedBox(width: 10),
               ElevatedButton(
+                onPressed: _removeFish,
+                child: Text("Remove Fish"),
+              ),
+              SizedBox(width: 10),
+              ElevatedButton(
                 onPressed: () {},
                 child: Text("Save Settings"),
               ),
@@ -140,18 +155,17 @@ class _MyHomePageState extends State<MyHomePage>
 
 class Fish {
   final Color color;
-  double top = Random().nextDouble() * 300; 
-  double left =
-      Random().nextDouble() * 300; 
-  double verticalDirection = 1; 
-  double horizontalDirection = 1; 
+  double top = Random().nextDouble() * 300;
+  double left = Random().nextDouble() * 300;
+  double verticalDirection = 1;
+  double horizontalDirection = 1;
   late AnimationController controller;
 
   Fish({required this.color, required this.controller});
 
   void updatePosition() {
-    top += 2 * verticalDirection; 
-    left += 2 * horizontalDirection; 
+    top += 2 * verticalDirection;
+    left += 2 * horizontalDirection;
 
     if (top <= 0 || top >= 300) {
       verticalDirection *= -1;
