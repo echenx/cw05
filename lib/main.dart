@@ -30,14 +30,38 @@ class MyHomePage extends StatefulWidget {
   State<MyHomePage> createState() => _MyHomePageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
+class _MyHomePageState extends State<MyHomePage>
+    with SingleTickerProviderStateMixin {
   List<Fish> fishes = [];
   double speed = 1.0;
   Color selectedColor = Colors.blue;
+  late AnimationController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+        duration: const Duration(seconds: 2), vsync: this)
+      ..repeat();
+
+    _controller.addListener(() {
+      setState(() {
+        for (var fish in fishes) {
+          fish.updatePosition();
+        }
+      });
+    });
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
 
   void _addFish() {
     setState(() {
-      fishes.add(Fish(color: selectedColor));
+      fishes.add(Fish(color: selectedColor, controller: _controller));
     });
   }
 
@@ -116,13 +140,31 @@ class _MyHomePageState extends State<MyHomePage> {
 
 class Fish {
   final Color color;
+  double top = Random().nextDouble() * 300; 
+  double left =
+      Random().nextDouble() * 300; 
+  double verticalDirection = 1; 
+  double horizontalDirection = 1; 
+  late AnimationController controller;
 
-  Fish({required this.color});
+  Fish({required this.color, required this.controller});
+
+  void updatePosition() {
+    top += 2 * verticalDirection; 
+    left += 2 * horizontalDirection; 
+
+    if (top <= 0 || top >= 300) {
+      verticalDirection *= -1;
+    }
+    if (left <= 0 || left >= 300) {
+      horizontalDirection *= -1;
+    }
+  }
 
   Widget build() {
     return Positioned(
-      top: Random().nextDouble() * 300,
-      left: Random().nextDouble() * 300,
+      top: top,
+      left: left,
       child: CircleAvatar(
         backgroundColor: color,
         radius: 10,
